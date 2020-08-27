@@ -15,6 +15,16 @@ And generate the documentation
 .\psDoc.ps1 -moduleName MySpecialModule
 ```
 
+Or copy the repository as Powershell module into `C:\Users\<your_user>\Documents\WindowsPowerShell\Modules\psDoc` or `C:\Program Files\WindowsPowerShell\Modules\psDoc` and generate the docmentation
+
+```
+New-PSDoc -moduleName MySpecialModule -verbose
+```
+
+```
+@("MySpecialModule", "MyOtherModule") | New-PSDoc -outputDir "help" -outputFormat "asciidoc"
+```
+
 ### License ###
 
 [Microsoft Public License (Ms-PL)](https://opensource.org/licenses/MS-PL)

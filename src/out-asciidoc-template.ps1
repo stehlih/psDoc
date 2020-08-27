@@ -108,7 +108,7 @@ $($synopsis)
 
 === Parameters
 
-[options="autowidth"]
+[options="header, autowidth"]
 |===
 | Name  | Alias  | Description | Required? | Pipeline Input | Default Value
 "@

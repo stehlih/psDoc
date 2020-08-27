@@ -81,10 +81,10 @@ if(Get-ModuleCount $moduleName -eq 1){
         $fileExt = ".html"
         $template = "$PSScriptRoot/out-html-template.ps1"
     }
-    $outputFilePath = "$outputDir\$fileName$fileExt"
+    $outputFilePath = "$outputDir/$fileName$fileExt"
 
-    "Using template '$template'."
-    "Generating documentation of module '$moduleName' to '$outputFilePath'..."
+    Write-Verbose "Using template '$template'."
+    Write-Verbose "Generating documentation of module '$moduleName' to '$outputFilePath'..."
 
     $template = Get-Content $template -raw -force
     Invoke-Expression $template > $outputFilePath
