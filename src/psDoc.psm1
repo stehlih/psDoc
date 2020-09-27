@@ -103,31 +103,47 @@ function New-PSRepositoryDoc
     
     [array] $tempInstalledModules = [System.Collections.ArrayList]@()
     
-    foreach( $module in $modules)
+    foreach( $module in $modules )
     {
-        [string] $moduleName = $module.Name
-        [string] $fileName   = "$filePrefix$moduleName"
-    
-        Import-Module -Name $moduleName -ErrorAction SilentlyContinue
-    
-        if( -not (Get-Module -Name $moduleName) )
-        { 
-            $tempInstalledModules += $moduleName
-    
-            Write-Output "Temporary installation of module '$moduleName' in current user scope..."
-            
-            Install-Module -Name $moduleName -Scope CurrentUser -Repository $repository
+        try 
+        {    
+            [string] $moduleName = $module.Name
+            [string] $fileName   = "$filePrefix$moduleName"
+        
+            Import-Module -Name $moduleName -ErrorAction SilentlyContinue
+        
+            if( -not (Get-Module -Name $moduleName) )
+            { 
+                $tempInstalledModules += $moduleName
+        
+                Write-Output "Temporary installation of module '$moduleName' in current user scope..."
+                
+                Install-Module -Name $moduleName -Scope CurrentUser -Repository $repository -AllowClobber
+            }
+        
+            Write-Output "Generating documentation of module '$moduleName'..."
+        
+            . $PSScriptRoot/psDoc.ps1 -moduleName $moduleName -outputFormat $outputFormat -outputDir $outputDir -fileName $fileName
         }
-    
-        Write-Output "Generating documentation of module '$moduleName'..."
-    
-        . $PSScriptRoot/psDoc.ps1 -moduleName $moduleName -outputFormat $outputFormat -outputDir $outputDir -fileName $fileName
+        catch 
+        {
+            Write-Output "ERROR: Unable to generate documentation of module '$moduleName'."
+
+            # ignore errors and continue with next module
+        }
     }
     
     foreach( $moduleName in $tempInstalledModules)
     {
-        Write-Output "Remove temporary installation of module '$moduleName'..."
+        try 
+        { 
+            Write-Output "Remove temporary installation of module '$moduleName'..."
     
-        Uninstall-Module -Name $moduleName -ErrorAction Continue -Force
+            Uninstall-Module -Name $moduleName -ErrorAction Continue -Force
+        }
+        catch 
+        {
+            # ignore errors and continue with next module
+        }
     }
 }
